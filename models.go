@@ -1,11 +1,14 @@
 package main
 
+import "time"
+
 type EntryType int
 
 type Entry struct {
-	Name     string
-	FullPath string
-	Type     EntryType
+	Name         string
+	FullPath     string
+	Type         EntryType
+	ModifiedTime time.Time
 }
 
 const (
