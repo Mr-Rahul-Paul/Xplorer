@@ -1,0 +1,3 @@
+- i have init the go folder with go mod init
+- made the main go file 
+- made filesystems.go and main.go displays the current directory entries
