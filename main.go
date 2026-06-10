@@ -1,8 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"log"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
@@ -12,8 +13,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	//init the state of the TUI
+	model := NewModel(".", entries)
 
-	for _, entry := range entries {
-		fmt.Println(entry.Name)
+	program := tea.NewProgram(model)
+
+	if _, err := program.Run(); err != nil {
+		log.Fatal(err)
+
 	}
 }

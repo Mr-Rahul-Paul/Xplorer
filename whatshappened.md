@@ -2,3 +2,4 @@
 - made the main go file 
 - made filesystems.go and main.go displays the current directory entries
 - sorted by time
+- added tui model and TUI methods
