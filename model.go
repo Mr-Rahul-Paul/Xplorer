@@ -39,6 +39,27 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.SelectedIndex < len(m.Entries)-1 {
 				m.SelectedIndex++
 			}
+		case "enter":
+			if len(m.Entries) == 0 {
+				return m, nil
+			}
+
+			selectedEntry := m.Entries[m.SelectedIndex]
+			// if != DirectorDirectoryEntry ??? open the file
+			if selectedEntry.Type == DirectoryEntry {
+				//this is action so we can read disk it works
+				entries, err := ReadDirectory(selectedEntry.FullPath)
+				//check for err
+				if err != nil {
+					m.StatusMessage = err.Error()
+					return m, nil
+				}
+
+				m.CurrentPath = selectedEntry.FullPath // get in thre folder
+				m.Entries = entries
+				m.SelectedIndex = 0
+				m.StatusMessage = ""
+			}
 		}
 	}
 	return m, nil
@@ -48,10 +69,15 @@ func (m Model) View() string {
 	view := "THIS IS THE CURRENT PATH: " + m.CurrentPath + "\n\n"
 
 	for i, entry := range m.Entries {
-		cursor := " "
+		cursor := " " // i am keeping the single space cause it looks cool
 
 		if i == m.SelectedIndex {
 			cursor = "> "
+		}
+
+		//show err
+		if m.StatusMessage != "" {
+			view += "\n" + m.StatusMessage + "\n"
 		}
 
 		view += cursor + entry.Name + "\n"
