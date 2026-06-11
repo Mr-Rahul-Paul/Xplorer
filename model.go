@@ -1,10 +1,13 @@
 package main
 
 import (
+	"os/exec"
 	"path/filepath"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
+
+const APP = "nvim" // this app will open text files
 
 // this file is storing the bubble tea model
 // why is it confusingly named ? idk AI told me to
@@ -31,6 +34,12 @@ func (m Model) Init() tea.Cmd {
 // this kinda depends on the next view
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case error:
+		if msg != nil {
+			m.StatusMessage = msg.Error()
+		} else {
+			m.StatusMessage = "Returned from editor"
+		}
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "q", "ctrl+c":
@@ -39,7 +48,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.SelectedIndex > 0 {
 				m.SelectedIndex--
 			} else {
-				m.SelectedIndex = len(m.Entries) - 1
+				if len(m.Entries) != 0 {
+					m.SelectedIndex = len(m.Entries) - 1
+				}
 			}
 		case "down", "j":
 			if m.SelectedIndex < len(m.Entries)-1 {
@@ -67,6 +78,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.Entries = entries
 				m.SelectedIndex = 0
 				m.StatusMessage = ""
+			} else {
+				cmd := exec.Command(APP, selectedEntry.FullPath)
+				// cmd.Start()
+				// if err := cmd.Start(); err != nil {
+				// 	m.StatusMessage = err.Error()
+				// 	return m, nil
+				// }
+				// m.StatusMessage = "Opened " + selectedEntry.Name
+				return m, tea.ExecProcess(cmd, func(err error) tea.Msg {
+					return err
+				})
 			}
 
 		case "backspace":
