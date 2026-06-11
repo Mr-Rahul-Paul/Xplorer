@@ -28,18 +28,33 @@ func (m Model) Init() tea.Cmd {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if msg.String() == "q" || msg.String() == "ctrl+c" {
+		switch msg.String() {
+		case "q", "ctrl+c":
 			return m, tea.Quit
+		case "up", "k":
+			if m.SelectedIndex > 0 {
+				m.SelectedIndex--
+			}
+		case "down", "j":
+			if m.SelectedIndex < len(m.Entries)-1 {
+				m.SelectedIndex++
+			}
 		}
 	}
 	return m, nil
 }
 
-func (m Model)  View() string {
+func (m Model) View() string {
 	view := "THIS IS THE CURRENT PATH: " + m.CurrentPath + "\n\n"
 
-	for _, entry := range m.Entries {
-		view += entry.Name + "\n"
+	for i, entry := range m.Entries {
+		cursor := " "
+
+		if i == m.SelectedIndex {
+			cursor = "> "
+		}
+
+		view += cursor + entry.Name + "\n"
 	}
 
 	view += "\n Press q or 'ctrl+c' to quit \n"
