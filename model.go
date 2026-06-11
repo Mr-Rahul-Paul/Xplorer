@@ -1,6 +1,10 @@
 package main
 
-import tea "github.com/charmbracelet/bubbletea"
+import (
+	"path/filepath"
+
+	tea "github.com/charmbracelet/bubbletea"
+)
 
 // this file is storing the bubble tea model
 // why is it confusingly named ? idk AI told me to
@@ -34,10 +38,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "up", "k":
 			if m.SelectedIndex > 0 {
 				m.SelectedIndex--
+			} else {
+				m.SelectedIndex = len(m.Entries) - 1
 			}
 		case "down", "j":
 			if m.SelectedIndex < len(m.Entries)-1 {
 				m.SelectedIndex++
+			} else {
+				m.SelectedIndex = 0
 			}
 		case "enter":
 			if len(m.Entries) == 0 {
@@ -60,6 +68,21 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.SelectedIndex = 0
 				m.StatusMessage = ""
 			}
+
+		case "backspace":
+			parentPath := filepath.Dir(m.CurrentPath)
+
+			entries, err := ReadDirectory(parentPath)
+
+			if err != nil {
+				m.StatusMessage = err.Error()
+				return m, nil
+			}
+
+			m.CurrentPath = parentPath // get in thre folder
+			m.Entries = entries
+			m.SelectedIndex = 0
+			m.StatusMessage = ""
 		}
 	}
 	return m, nil
@@ -76,13 +99,12 @@ func (m Model) View() string {
 		}
 
 		//show err
-		if m.StatusMessage != "" {
-			view += "\n" + m.StatusMessage + "\n"
-		}
 
 		view += cursor + entry.Name + "\n"
 	}
-
+	if m.StatusMessage != "" {
+		view += "\n" + m.StatusMessage + "\n"
+	}
 	view += "\n Press q or 'ctrl+c' to quit \n"
 
 	return view
