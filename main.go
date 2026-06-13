@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// Starting point
-	entries, err := ReadDirectory(".")
+	entries, err := ReadDirectory(".", false)
 
 	if err != nil {
 		log.Fatal(err)

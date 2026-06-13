@@ -16,6 +16,7 @@ type Model struct {
 	Entries       []Entry
 	SelectedIndex int
 	StatusMessage string
+	ShowHidden    bool
 }
 
 func NewModel(path string, entries []Entry) Model {
@@ -24,6 +25,7 @@ func NewModel(path string, entries []Entry) Model {
 		Entries:       entries,
 		SelectedIndex: 0,
 		StatusMessage: "",
+		ShowHidden:    false,
 	}
 }
 
@@ -71,7 +73,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// if != DirectorDirectoryEntry ??? open the file
 			if selectedEntry.Type == DirectoryEntry {
 				//this is action so we can read disk it works
-				entries, err := ReadDirectory(selectedEntry.FullPath)
+				entries, err := ReadDirectory(selectedEntry.FullPath, m.ShowHidden)
 				//check for err
 				if err != nil {
 					m.StatusMessage = err.Error()
@@ -96,7 +98,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "r":
-			entries, err := ReadDirectory(m.CurrentPath)
+			entries, err := ReadDirectory(m.CurrentPath, m.ShowHidden)
 			if err != nil {
 				m.StatusMessage = err.Error()
 				return m, nil
@@ -109,7 +111,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "backspace":
 			parentPath := filepath.Dir(m.CurrentPath)
 
-			entries, err := ReadDirectory(parentPath)
+			entries, err := ReadDirectory(parentPath, m.ShowHidden)
 
 			if err != nil {
 				m.StatusMessage = err.Error()
@@ -120,6 +122,26 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.Entries = entries
 			m.SelectedIndex = 0
 			m.StatusMessage = ""
+
+		case "h":
+			m.StatusMessage = "Hidden files toggled"
+			// toggles the state and not hard codes it
+			m.ShowHidden = !m.ShowHidden
+
+			entries, err := ReadDirectory(m.CurrentPath, m.ShowHidden)
+			if err != nil {
+				m.StatusMessage = err.Error()
+			}
+			// we reload the model - readdisk is happening right (or happened above) ?
+			m.Entries = entries
+			m.SelectedIndex = 0
+
+			if m.ShowHidden {
+				m.StatusMessage = "showing hidden files"
+			} else {
+				m.StatusMessage = "not showing hidden files"
+			}
+
 		}
 	}
 	return m, nil

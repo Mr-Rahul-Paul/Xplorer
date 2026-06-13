@@ -6,7 +6,7 @@ import (
 	"sort"
 )
 
-func ReadDirectory(path string) ([]Entry, error) {
+func ReadDirectory(path string, showHidden bool) ([]Entry, error) {
 	dirEntries, err := os.ReadDir(path)
 	if err != nil {
 		return nil, err
@@ -15,6 +15,13 @@ func ReadDirectory(path string) ([]Entry, error) {
 	var entries []Entry
 
 	for _, dirEntry := range dirEntries {
+		//what does it mean - we are checking of files name starts with
+		// "." we continue or not , so dot files and folders are hidden
+		// G--DAMn
+		if !showHidden && dirEntry.Name()[0] == '.' {
+			continue
+		}
+		
 		entryType := FileEntry
 
 		if dirEntry.IsDir() {
