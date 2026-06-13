@@ -42,8 +42,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case tea.KeyMsg:
 		switch msg.String() {
+
 		case "q", "ctrl+c":
 			return m, tea.Quit
+
 		case "up", "k":
 			if m.SelectedIndex > 0 {
 				m.SelectedIndex--
@@ -52,12 +54,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.SelectedIndex = len(m.Entries) - 1
 				}
 			}
+
 		case "down", "j":
 			if m.SelectedIndex < len(m.Entries)-1 {
 				m.SelectedIndex++
 			} else {
 				m.SelectedIndex = 0
 			}
+
 		case "enter":
 			if len(m.Entries) == 0 {
 				return m, nil
@@ -90,6 +94,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return err
 				})
 			}
+
+		case "r":
+			entries, err := ReadDirectory(m.CurrentPath)
+			if err != nil {
+				m.StatusMessage = err.Error()
+				return m, nil
+			}
+
+			m.Entries = entries
+			m.SelectedIndex = 0
+			m.StatusMessage = "Refreshed"
 
 		case "backspace":
 			parentPath := filepath.Dir(m.CurrentPath)
