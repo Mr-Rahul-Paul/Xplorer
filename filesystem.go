@@ -21,7 +21,7 @@ func ReadDirectory(path string, showHidden bool) ([]Entry, error) {
 		if !showHidden && dirEntry.Name()[0] == '.' {
 			continue
 		}
-		
+
 		entryType := FileEntry
 
 		if dirEntry.IsDir() {

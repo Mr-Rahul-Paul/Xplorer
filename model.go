@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os/exec"
 	"path/filepath"
 
@@ -17,6 +18,8 @@ type Model struct {
 	SelectedIndex int
 	StatusMessage string
 	ShowHidden    bool
+	Width         int
+	Height        int
 }
 
 func NewModel(path string, entries []Entry) Model {
@@ -26,6 +29,8 @@ func NewModel(path string, entries []Entry) Model {
 		SelectedIndex: 0,
 		StatusMessage: "",
 		ShowHidden:    false,
+		Width:         0,
+		Height:        0,
 	}
 }
 
@@ -42,6 +47,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else {
 			m.StatusMessage = "Returned from editor"
 		}
+
+	case tea.WindowSizeMsg:
+		m.Width = msg.Width
+		m.Height = msg.Height
+
 	case tea.KeyMsg:
 		switch msg.String() {
 
@@ -131,6 +141,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			entries, err := ReadDirectory(m.CurrentPath, m.ShowHidden)
 			if err != nil {
 				m.StatusMessage = err.Error()
+				return m, nil
 			}
 			// we reload the model - readdisk is happening right (or happened above) ?
 			m.Entries = entries
@@ -141,18 +152,23 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.StatusMessage = "not showing hidden files"
 			}
-
+			//case ends here
 		}
 	}
 	return m, nil
 }
 
 func (m Model) View() string {
-	view := "THIS IS THE CURRENT PATH: " + m.CurrentPath + "\n\n"
+	// view := "THIS IS THE CURRENT PATH: " + m.CurrentPath + "\n\n"
+
+	view := "Size: "
+	view += fmt.Sprintf("%dx%d", m.Width, m.Height)
+	view += "\n"
+	view += "THIS IS THE CURRENT PATH: " + m.CurrentPath + "\n\n"
 
 	for i, entry := range m.Entries {
-		cursor := " " // i am keeping the single space cause it looks cool
 
+		cursor := " " // i am keeping the single space cause it looks cool
 		if i == m.SelectedIndex {
 			cursor = "> "
 		}

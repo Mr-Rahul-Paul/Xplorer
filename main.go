@@ -9,14 +9,14 @@ import (
 func main() {
 	// Starting point
 	entries, err := ReadDirectory(".", false)
-
-	if err != nil {
-		log.Fatal(err)
-	}
 	//init the state of the TUI
 	model := NewModel(".", entries)
 
-	program := tea.NewProgram(model)
+	if err != nil {
+		model.StatusMessage = err.Error()
+	}
+
+	program := tea.NewProgram(model, tea.WithAltScreen())
 
 	if _, err := program.Run(); err != nil {
 		log.Fatal(err)
