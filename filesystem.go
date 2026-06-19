@@ -37,6 +37,7 @@ func ReadDirectory(path string, showHidden bool) ([]Entry, error) {
 			Name:         dirEntry.Name(),
 			FullPath:     filepath.Join(path, dirEntry.Name()),
 			Type:         entryType,
+			Size:         info.Size(),
 			ModifiedTime: info.ModTime(),
 		}
 

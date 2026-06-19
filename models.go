@@ -5,10 +5,12 @@ import "time"
 type EntryType int
 
 type Entry struct {
-	Name         string
-	FullPath     string
-	Type         EntryType
-	ModifiedTime time.Time
+	Name            string
+	FullPath        string
+	Type            EntryType
+	size            int64
+	ModifiedTime    time.Time
+	IsBrokenSymlink bool
 }
 
 const (
