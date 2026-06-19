@@ -48,8 +48,10 @@ func ReadDirectory(path string, showHidden bool) ([]Entry, error) {
 		}
 
 		entry := Entry{
-			Name:            dirEntry.Name(),
-			FullPath:        filepath.Join(path, dirEntry.Name()),
+			Name: dirEntry.Name(),
+			// no need to fetch again
+			// FullPath:        filepath.Join(path, dirEntry.Name()),
+			FullPath:        fullPath,
 			Type:            entryType,
 			Size:            info.Size(),
 			ModifiedTime:    info.ModTime(),

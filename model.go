@@ -80,6 +80,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			selectedEntry := m.Entries[m.SelectedIndex]
+
+			if selectedEntry.Type == SymlinkEntry && selectedEntry.IsBrokenSymlink {
+				// dont open broken links
+				m.StatusMessage = "Broken symlink"
+				return m, nil
+			}
 			// if != DirectorDirectoryEntry ??? open the file
 			if selectedEntry.Type == DirectoryEntry {
 				//this is action so we can read disk it works
@@ -159,6 +165,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
+	marker := "[F] "
+
+	switch entry.Type()
+
 	// view := "THIS IS THE CURRENT PATH: " + m.CurrentPath + "\n\n"
 
 	view := "Size: "
