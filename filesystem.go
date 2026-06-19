@@ -23,9 +23,23 @@ func ReadDirectory(path string, showHidden bool) ([]Entry, error) {
 		}
 
 		entryType := FileEntry
-
-		if dirEntry.IsDir() {
+		// mode symlink checkss if symlink bit is set
+		// direntry.Type() returns fs type bits
+		if dirEntry.Type()&os.ModeSymlink != 0 {
+			entryType = SymlinkEntry
+		} else if dirEntry.IsDir() {
 			entryType = DirectoryEntry
+		}
+
+		//after entry identified
+		fullPath := filepath.Join(path, dirEntry.Name())
+		isBrokenSymlink := false
+
+		if entryType == SymlinkEntry {
+			// os.Stat follows the symlink to its target
+			if _, err := os.Stat(fullPath); err != nil && os.IsNotExist(err) {
+				isBrokenSymlink = true
+			}
 		}
 
 		info, err := dirEntry.Info()
@@ -34,11 +48,12 @@ func ReadDirectory(path string, showHidden bool) ([]Entry, error) {
 		}
 
 		entry := Entry{
-			Name:         dirEntry.Name(),
-			FullPath:     filepath.Join(path, dirEntry.Name()),
-			Type:         entryType,
-			Size:         info.Size(),
-			ModifiedTime: info.ModTime(),
+			Name:            dirEntry.Name(),
+			FullPath:        filepath.Join(path, dirEntry.Name()),
+			Type:            entryType,
+			Size:            info.Size(),
+			ModifiedTime:    info.ModTime(),
+			IsBrokenSymlink: isBrokenSymlink,
 		}
 
 		entries = append(entries, entry)

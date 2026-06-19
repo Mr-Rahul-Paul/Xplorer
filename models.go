@@ -8,7 +8,7 @@ type Entry struct {
 	Name            string
 	FullPath        string
 	Type            EntryType
-	size            int64
+	Size            int64
 	ModifiedTime    time.Time
 	IsBrokenSymlink bool
 }
