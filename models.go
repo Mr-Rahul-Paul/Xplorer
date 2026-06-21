@@ -17,5 +17,5 @@ const (
 	FileEntry EntryType = iota
 	DirectoryEntry
 	SymlinkEntry
-	OtherEntry
+	OtherEntry // not everything is a file , dir or a Symlink.
 )

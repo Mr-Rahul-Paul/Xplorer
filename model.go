@@ -86,6 +86,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.StatusMessage = "Broken symlink"
 				return m, nil
 			}
+			if selectedEntry.Type == OtherEntry {
+				m.StatusMessage = "Unsupported file type"
+				return m, nil
+			}
 			// if != DirectorDirectoryEntry ??? open the file
 			if selectedEntry.Type == DirectoryEntry {
 				//this is action so we can read disk it works
@@ -202,6 +206,9 @@ func (m Model) View() string {
 			marker = "[Directory] "
 		case SymlinkEntry:
 			marker = "[Link] "
+		case OtherEntry:
+			marker = "[Other] "
+
 		}
 
 		if entry.IsBrokenSymlink {

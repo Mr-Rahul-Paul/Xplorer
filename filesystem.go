@@ -22,13 +22,17 @@ func ReadDirectory(path string, showHidden bool) ([]Entry, error) {
 			continue
 		}
 
-		entryType := FileEntry
+		// entryType := FileEntry /// this is wrong lil bro
+		// Linux also has sockets, named pipes, and device files.
+		entryType := OtherEntry
 		// mode symlink checkss if symlink bit is set
 		// direntry.Type() returns fs type bits
 		if dirEntry.Type()&os.ModeSymlink != 0 {
 			entryType = SymlinkEntry
 		} else if dirEntry.IsDir() {
 			entryType = DirectoryEntry
+		} else if dirEntry.Type().IsRegular() {
+			entryType = FileEntry
 		}
 
 		//after entry identified
