@@ -219,6 +219,10 @@ func (m Model) View() string {
 	view += "\n"
 	view += "THIS IS THE CURRENT PATH: " + m.CurrentPath + "\n\n"
 
+	if len(m.Entries) == 0 {
+		view += " Empty directory\n"
+	}
+
 	for i, entry := range m.Entries {
 
 		marker := "[File] "

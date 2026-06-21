@@ -2,15 +2,22 @@ package main
 
 import (
 	"log"
+	"path/filepath"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
+
+	startPath, err := filepath.Abs(".")
+	if err != nil {
+		log.Fatal(err)
+
+	}
 	// Starting point
-	entries, err := ReadDirectory(".", false)
+	entries, err := ReadDirectory(startPath, false)
 	//init the state of the TUI
-	model := NewModel(".", entries)
+	model := NewModel(startPath, entries)
 
 	if err != nil {
 		model.StatusMessage = err.Error()
