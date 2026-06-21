@@ -165,10 +165,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	marker := "[F] "
-
-	switch entry.Type()
-
 	// view := "THIS IS THE CURRENT PATH: " + m.CurrentPath + "\n\n"
 
 	view := "Size: "
@@ -178,6 +174,19 @@ func (m Model) View() string {
 
 	for i, entry := range m.Entries {
 
+		marker := "[File] "
+
+		switch entry.Type {
+		case DirectoryEntry:
+			marker = "[Directory] "
+		case SymlinkEntry:
+			marker = "[Link] "
+		}
+
+		if entry.IsBrokenSymlink {
+			marker = "[!broken] "
+		}
+
 		cursor := " " // i am keeping the single space cause it looks cool
 		if i == m.SelectedIndex {
 			cursor = "> "
@@ -185,7 +194,7 @@ func (m Model) View() string {
 
 		//show err
 
-		view += cursor + entry.Name + "\n"
+		view += cursor + entry.Name + "\t" + marker + "\n"
 	}
 	if m.StatusMessage != "" {
 		view += "\n" + m.StatusMessage + "\n"
