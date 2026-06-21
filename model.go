@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"path/filepath"
 
@@ -89,6 +90,25 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if selectedEntry.Type == OtherEntry {
 				m.StatusMessage = "Unsupported file type"
 				return m, nil
+			}
+			// os.Stat checks the selected path immediately before using it.
+			// os.Stat follows the entry to its target
+			// validate before entering
+			
+			_, err := os.Stat(selectedEntry.FullPath)
+			if err != nil {
+				if os.IsNotExist(err) {
+					entries, readErr := ReadDirectory(m.CurrentPath, m.ShowHidden)
+					if readErr != nil {
+						m.StatusMessage = readErr.Error()
+						return m, nil
+					}
+
+					m.Entries = entries
+					m.SelectedIndex = 0
+					m.StatusMessage = "Path no longer exist"
+					return m, nil
+				}
 			}
 			// if != DirectorDirectoryEntry ??? open the file
 			if selectedEntry.Type == DirectoryEntry {
