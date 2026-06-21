@@ -70,3 +70,25 @@ func ReadDirectory(path string, showHidden bool) ([]Entry, error) {
 	})
 	return entries, nil
 }
+
+func ReadNearestExisitingDirectory(path string, showHidden bool) (string, []Entry, error) {
+	currentPath := path
+
+	for {
+		entries, err := ReadDirectory(currentPath, showHidden)
+		if err == nil {
+			return currentPath, entries, nil
+		}
+
+		if !os.IsNotExist(err) {
+			return "", nil, err
+		}
+
+		parentPath := filepath.Dir(currentPath)
+		if parentPath == currentPath{
+			return "" , nil , err
+		}
+
+		currentPath = parentPath
+	}
+}

@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"golang.org/x/text/currency"
 )
 
 const APP = "nvim" // this app will open text files
@@ -106,7 +107,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 					m.Entries = entries
 					m.SelectedIndex = 0
-					m.StatusMessage = "Path no longer exist"
+					m.StatusMessage = "Path no longer exists"
 					return m, nil
 				}
 				m.StatusMessage = err.Error()
@@ -141,12 +142,22 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "r":
-			entries, err := ReadDirectory(m.CurrentPath, m.ShowHidden)
+			path, entries, err := ReadNearestExisitingDirectory(
+					m.CurrentPath,
+					m.ShowHidden,
+			)
 			if err != nil {
-				m.StatusMessage = err.Error()
-				return m, nil
+					m.StatusMessage = err.Error()
+					return m, nil
 			}
 
+			if path!= m.CurrentPath{
+				m.StatusMessage  = "Directory was removed , moved to nearest parent"
+			} else {
+				m.StatusMessage = "Refreshed"
+			}
+
+			m.CurrentPath = path
 			m.Entries = entries
 			m.SelectedIndex = 0
 			m.StatusMessage = "Refreshed"
