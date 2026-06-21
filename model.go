@@ -158,6 +158,27 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.StatusMessage = "not showing hidden files"
 			}
+
+			// TODO : IN FUTURE ADD TOGGLE FOR MARKERS
+			// case "f":
+			// 	m.StatusMessage = "marker toggled"
+			// 	// toggles the state and not hard codes it
+			// 	m.ShowHidden = !m.ShowHidden
+
+			// 	entries, err := ReadDirectory(m.CurrentPath, m.ShowHidden)
+			// 	if err != nil {
+			// 		m.StatusMessage = err.Error()
+			// 		return m, nil
+			// 	}
+			// 	// we reload the model - readdisk is happening right (or happened above) ?
+			// 	m.Entries = entries
+			// 	m.SelectedIndex = 0
+
+			// 	if m.ShowHidden {
+			// 		m.StatusMessage = "showing hidden files"
+			// 	} else {
+			// 		m.StatusMessage = "not showing hidden files"
+			// 	}
 			//case ends here
 		}
 	}
@@ -187,14 +208,12 @@ func (m Model) View() string {
 			marker = "[!broken] "
 		}
 
-		cursor := " " // i am keeping the single space cause it looks cool
+		cursor := "  " // i am keeping the single space cause it looks cool
 		if i == m.SelectedIndex {
 			cursor = "> "
 		}
 
-		//show err
-
-		view += cursor + entry.Name + "\t" + marker + "\n"
+		view += cursor + marker + entry.Name + "\n"
 	}
 	if m.StatusMessage != "" {
 		view += "\n" + m.StatusMessage + "\n"
