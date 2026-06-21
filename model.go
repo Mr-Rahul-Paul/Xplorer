@@ -94,7 +94,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// os.Stat checks the selected path immediately before using it.
 			// os.Stat follows the entry to its target
 			// validate before entering
-			
+
 			_, err := os.Stat(selectedEntry.FullPath)
 			if err != nil {
 				if os.IsNotExist(err) {
@@ -109,6 +109,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.StatusMessage = "Path no longer exist"
 					return m, nil
 				}
+				m.StatusMessage = err.Error()
+				return m, nil
 			}
 			// if != DirectorDirectoryEntry ??? open the file
 			if selectedEntry.Type == DirectoryEntry {
