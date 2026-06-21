@@ -95,7 +95,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// os.Stat follows the entry to its target
 			// validate before entering
 
-			_, err := os.Stat(selectedEntry.FullPath)
+			info, err := os.Stat(selectedEntry.FullPath)
 			if err != nil {
 				if os.IsNotExist(err) {
 					entries, readErr := ReadDirectory(m.CurrentPath, m.ShowHidden)
@@ -113,7 +113,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 			// if != DirectorDirectoryEntry ??? open the file
-			if selectedEntry.Type == DirectoryEntry {
+			if selectedEntry.Type == DirectoryEntry ||
+				(selectedEntry.Type == SymlinkEntry && info.IsDir()) {
 				//this is action so we can read disk it works
 				entries, err := ReadDirectory(selectedEntry.FullPath, m.ShowHidden)
 				//check for err
