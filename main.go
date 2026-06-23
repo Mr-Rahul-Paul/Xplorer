@@ -14,7 +14,6 @@ func main() {
 		log.Fatal(err)
 
 	}
-	// Starting point
 	entries, err := ReadDirectory(startPath, false)
 	//init the state of the TUI
 	model := NewModel(startPath, entries)
