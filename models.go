@@ -15,6 +15,7 @@ type Entry struct {
 
 type SortMode int
 
+// lmao sorting by time is just a state -> int ????
 const (
 	SortByTime SortMode = iota
 	SortByName

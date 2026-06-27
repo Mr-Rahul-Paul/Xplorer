@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func ReadDirectory(path string, showHidden bool) ([]Entry, error) {
+func ReadDirectory(path string, showHidden bool, sortMode SortMode) ([]Entry, error) {
 	dirEntries, err := os.ReadDir(path)
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func ReadDirectory(path string, showHidden bool) ([]Entry, error) {
 		entries = append(entries, entry)
 	}
 	// this sorts the arr ... wierd syntax ngl
-	SortEntries(entries, SortByTime)
+	SortEntries(entries, sortMode)
 
 	return entries, nil
 }
@@ -95,11 +95,11 @@ func SortEntries(entries []Entry, mode SortMode) {
 	})
 }
 
-func ReadNearestExisitingDirectory(path string, showHidden bool) (string, []Entry, error) {
+func ReadNearestExisitingDirectory(path string, showHidden bool, sortMode SortMode) (string, []Entry, error) {
 	currentPath := path
 
 	for {
-		entries, err := ReadDirectory(currentPath, showHidden)
+		entries, err := ReadDirectory(currentPath, showHidden, sortMode)
 		if err == nil {
 			return currentPath, entries, nil
 		}

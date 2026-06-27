@@ -37,7 +37,7 @@ func NewModel(path string, entries []Entry) Model {
 		ShowHidden:    false,
 		Width:         0,
 		Height:        0,
-		SortMode:      SortByTime,
+		SortMode:      SortByTime, // default for now 
 	}
 }
 
@@ -105,7 +105,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			info, err := os.Stat(selectedEntry.FullPath)
 			if err != nil {
 				if os.IsNotExist(err) {
-					entries, readErr := ReadDirectory(m.CurrentPath, m.ShowHidden)
+					entries, readErr := ReadDirectory(m.CurrentPath, m.ShowHidden, m.SortMode)
 					if readErr != nil {
 						m.StatusMessage = readErr.Error()
 						return m, nil
@@ -123,7 +123,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if selectedEntry.Type == DirectoryEntry ||
 				(selectedEntry.Type == SymlinkEntry && info.IsDir()) {
 				//this is action so we can read disk it works
-				entries, err := ReadDirectory(selectedEntry.FullPath, m.ShowHidden)
+				entries, err := ReadDirectory(selectedEntry.FullPath, m.ShowHidden, m.SortMode)
 				//check for err
 				if err != nil {
 					m.StatusMessage = err.Error()
@@ -151,6 +151,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			path, entries, err := ReadNearestExisitingDirectory(
 				m.CurrentPath,
 				m.ShowHidden,
+				m.SortMode,
 			)
 			if err != nil {
 				m.StatusMessage = err.Error()
@@ -170,7 +171,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "backspace":
 			parentPath := filepath.Dir(m.CurrentPath)
 
-			entries, err := ReadDirectory(parentPath, m.ShowHidden)
+			entries, err := ReadDirectory(parentPath, m.ShowHidden, m.SortMode)
 
 			if err != nil {
 				m.StatusMessage = err.Error()
@@ -187,7 +188,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// toggles the state and not hard codes it
 			m.ShowHidden = !m.ShowHidden
 
-			entries, err := ReadDirectory(m.CurrentPath, m.ShowHidden)
+			entries, err := ReadDirectory(m.CurrentPath, m.ShowHidden, m.SortMode)
 			if err != nil {
 				m.StatusMessage = err.Error()
 				return m, nil

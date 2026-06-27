@@ -14,7 +14,7 @@ func main() {
 		log.Fatal(err)
 
 	}
-	entries, err := ReadDirectory(startPath, false)
+	entries, err := ReadDirectory(startPath, false, SortByTime)
 	//init the state of the TUI
 	model := NewModel(startPath, entries)
 
