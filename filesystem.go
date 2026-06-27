@@ -85,8 +85,8 @@ func ReadNearestExisitingDirectory(path string, showHidden bool) (string, []Entr
 		}
 
 		parentPath := filepath.Dir(currentPath)
-		if parentPath == currentPath{
-			return "" , nil , err
+		if parentPath == currentPath {
+			return "", nil, err
 		}
 
 		currentPath = parentPath

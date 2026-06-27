@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"golang.org/x/text/currency"
 )
 
 const APP = "nvim" // this app will open text files
@@ -22,6 +21,10 @@ type Model struct {
 	ShowHidden    bool
 	Width         int
 	Height        int
+}
+
+type EditorFinsishedMsg struct {
+	Err error
 }
 
 func NewModel(path string, entries []Entry) Model {
@@ -143,16 +146,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "r":
 			path, entries, err := ReadNearestExisitingDirectory(
-					m.CurrentPath,
-					m.ShowHidden,
+				m.CurrentPath,
+				m.ShowHidden,
 			)
 			if err != nil {
-					m.StatusMessage = err.Error()
-					return m, nil
+				m.StatusMessage = err.Error()
+				return m, nil
 			}
 
-			if path!= m.CurrentPath{
-				m.StatusMessage  = "Directory was removed , moved to nearest parent"
+			if path != m.CurrentPath {
+				m.StatusMessage = "Directory was removed , moved to nearest parent"
 			} else {
 				m.StatusMessage = "Refreshed"
 			}
@@ -160,7 +163,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.CurrentPath = path
 			m.Entries = entries
 			m.SelectedIndex = 0
-			m.StatusMessage = "Refreshed"
 
 		case "backspace":
 			parentPath := filepath.Dir(m.CurrentPath)
