@@ -252,7 +252,7 @@ func (m Model) View() string {
 	view += fmt.Sprintf("%dx%d", m.Width, m.Height)
 	view += "\n"
 	view += "THIS IS THE CURRENT PATH: " + m.CurrentPath + "\n\n"
-
+	view += "Files are sorted by: " + m.SortMode.String() + "\n\n"
 	if len(m.Entries) == 0 {
 		view += " Empty directory\n"
 	}

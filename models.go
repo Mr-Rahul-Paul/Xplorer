@@ -28,3 +28,16 @@ const (
 	SymlinkEntry
 	OtherEntry // not everything is a file , dir or a Symlink.
 )
+
+func (s SortMode) String() string {
+	switch s {
+	case SortByTime:
+		return "time"
+	case SortByName:
+		return "name"
+	case SortByType:
+		return "type"
+	default:
+		return "unknown"
+	}
+}
