@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 )
 
 func ReadDirectory(path string, showHidden bool) ([]Entry, error) {
@@ -65,10 +66,33 @@ func ReadDirectory(path string, showHidden bool) ([]Entry, error) {
 		entries = append(entries, entry)
 	}
 	// this sorts the arr ... wierd syntax ngl
-	sort.Slice(entries, func(i, j int) bool {
-		return entries[i].ModifiedTime.After(entries[j].ModifiedTime)
-	})
+	SortEntries(entries, SortByTime)
+
 	return entries, nil
+}
+
+func SortEntries(entries []Entry, mode SortMode) {
+	sort.SliceStable(entries, func(i, j int) bool {
+		switch mode {
+		case SortByName:
+			left := strings.ToLower(entries[i].Name)
+			right := strings.ToLower(entries[j].Name)
+			return left < right
+
+		case SortByType:
+			if entries[i].Type == entries[j].Type {
+				left := strings.ToLower(entries[i].Name)
+				right := strings.ToLower(entries[j].Name)
+				return left < right
+			}
+			return entries[i].Type < entries[j].Type
+
+		case SortByTime:
+			fallthrough
+		default:
+			return entries[i].ModifiedTime.After(entries[j].ModifiedTime)
+		}
+	})
 }
 
 func ReadNearestExisitingDirectory(path string, showHidden bool) (string, []Entry, error) {

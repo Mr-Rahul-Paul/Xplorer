@@ -21,6 +21,7 @@ type Model struct {
 	ShowHidden    bool
 	Width         int
 	Height        int
+	SortMode      SortMode
 }
 
 type EditorFinishedMsg struct {
@@ -36,6 +37,7 @@ func NewModel(path string, entries []Entry) Model {
 		ShowHidden:    false,
 		Width:         0,
 		Height:        0,
+		SortMode:      SortByTime,
 	}
 }
 
@@ -47,7 +49,7 @@ func (m Model) Init() tea.Cmd {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 
-	case EditorFinsishedMsg:
+	case EditorFinishedMsg:
 		if msg.Err != nil {
 			m.StatusMessage = "Failed to open file: " + msg.Err.Error()
 		} else {

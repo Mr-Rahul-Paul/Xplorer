@@ -13,6 +13,14 @@ type Entry struct {
 	IsBrokenSymlink bool
 }
 
+type SortMode int
+
+const (
+	SortByTime SortMode = iota
+	SortByName
+	SortByType
+)
+
 const (
 	FileEntry EntryType = iota
 	DirectoryEntry
