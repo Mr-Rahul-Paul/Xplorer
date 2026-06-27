@@ -37,7 +37,7 @@ func NewModel(path string, entries []Entry) Model {
 		ShowHidden:    false,
 		Width:         0,
 		Height:        0,
-		SortMode:      SortByTime, // default for now 
+		SortMode:      SortByTime, // default for now
 	}
 }
 
@@ -202,27 +202,44 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.StatusMessage = "not showing hidden files"
 			}
-			// TODO : IN FUTURE ADD TOGGLE FOR MARKERS
-			// case "f":
-			// 	m.StatusMessage = "marker toggled"
-			// 	// toggles the state and not hard codes it
-			// 	m.ShowHidden = !m.ShowHidden
+		// TODO : IN FUTURE ADD TOGGLE FOR MARKERS
+		// case "f":
+		// 	m.StatusMessage = "marker toggled"
+		// 	// toggles the state and not hard codes it
+		// 	m.ShowHidden = !m.ShowHidden
 
-			// 	entries, err := ReadDirectory(m.CurrentPath, m.ShowHidden)
-			// 	if err != nil {
-			// 		m.StatusMessage = err.Error()
-			// 		return m, nil
-			// 	}
-			// 	// we reload the model - readdisk is happening right (or happened above) ?
-			// 	m.Entries = entries
-			// 	m.SelectedIndex = 0
+		// 	entries, err := ReadDirectory(m.CurrentPath, m.ShowHidden)
+		// 	if err != nil {
+		// 		m.StatusMessage = err.Error()
+		// 		return m, nil
+		// 	}
+		// 	// we reload the model - readdisk is happening right (or happened above) ?
+		// 	m.Entries = entries
+		// 	m.SelectedIndex = 0
 
-			// 	if m.ShowHidden {
-			// 		m.StatusMessage = "showing hidden files"
-			// 	} else {
-			// 		m.StatusMessage = "not showing hidden files"
-			// 	}
-			//case ends here
+		// 	if m.ShowHidden {
+		// 		m.StatusMessage = "showing hidden files"
+		// 	} else {
+		// 		m.StatusMessage = "not showing hidden files"
+		// 	}
+		//case ends here
+		case "s":
+			switch m.SortMode {
+			case SortByTime:
+				m.SortMode = SortByName
+				m.StatusMessage = "Sorted by name"
+
+			case SortByName:
+				m.SortMode = SortByType
+				m.StatusMessage = "Sorted by Type"
+
+			case SortByType:
+				m.SortMode = SortByTime
+				m.StatusMessage = "Sorted by Time"
+			}
+
+			SortEntries(m.Entries, m.SortMode)
+			m.SelectedIndex = 0
 		}
 	}
 	return m, nil
