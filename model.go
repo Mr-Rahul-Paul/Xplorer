@@ -23,7 +23,7 @@ type Model struct {
 	Height        int
 }
 
-type EditorFinsishedMsg struct {
+type EditorFinishedMsg struct {
 	Err error
 }
 
@@ -46,11 +46,12 @@ func (m Model) Init() tea.Cmd {
 // this kinda depends on the next view
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case error:
-		if msg != nil {
-			m.StatusMessage = msg.Error()
+
+	case EditorFinsishedMsg:
+		if msg.Err != nil {
+			m.StatusMessage = "Failed to open file: " + msg.Err.Error()
 		} else {
-			m.StatusMessage = "Returned from editor"
+			m.StatusMessage = "returned from editor"
 		}
 
 	case tea.WindowSizeMsg:
@@ -140,7 +141,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// }
 				// m.StatusMessage = "Opened " + selectedEntry.Name
 				return m, tea.ExecProcess(cmd, func(err error) tea.Msg {
-					return err
+					return EditorFinishedMsg{Err: err}
 				})
 			}
 
@@ -198,7 +199,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.StatusMessage = "not showing hidden files"
 			}
-
 			// TODO : IN FUTURE ADD TOGGLE FOR MARKERS
 			// case "f":
 			// 	m.StatusMessage = "marker toggled"
